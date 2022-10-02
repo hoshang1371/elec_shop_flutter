@@ -1,10 +1,11 @@
-import 'package:elec_shop/network/test.dart';
+import 'package:elec_shop/network/networks.dart';
+//import 'package:elec_shop/network/test.dart';
 import "package:flutter/material.dart";
 
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:elec_shop/json_user.dart';
 
-import 'package:elec_shop/network/test.dart';
+//import 'package:elec_shop/network/test.dart';
 
 // import "package:google_fonts/google_fonts.dart";
 TextEditingController emailController = TextEditingController();
@@ -118,14 +119,18 @@ class _LoginPageState extends State<LoginPage> {
       //ElevatedButton
       child: ElevatedButton(
         onPressed: () {
-          final user = User(emailController.text, passwordController.text);
+          final user = User(
+              email: emailController.text, password: passwordController.text);
           // debugPrint(emailController.text);
           // debugPrint(passwordController.text);
           final json = user.toJson();
           debugPrint("JSON: ${user.toJson()}");
           final newUser = User.fromJson(json);
           debugPrint('$newUser');
-          test();
+          //test();
+          final network = Network();
+          network.postDataLogin(
+              email: emailController.text, password: passwordController.text);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor:
