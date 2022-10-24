@@ -1,4 +1,4 @@
-import 'package:elec_shop/Data/products_data.dart';
+//import 'package:elec_shop/Data/products_data.dart';
 import 'package:elec_shop/Screens/product_list.dart';
 import 'package:elec_shop/network/networks.dart';
 //import 'package:elec_shop/network/test.dart';
@@ -10,6 +10,11 @@ import 'package:elec_shop/shared_preferences/shared_preferences_token.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'dart:async';
+
+import 'package:loader_overlay/loader_overlay.dart';
+
+import 'base_page.dart';
+
 // import 'dart:developer' as developer;
 // import 'package:flutter/services.dart';
 
@@ -32,17 +37,21 @@ Future<String> getValue(BuildContext context) async {
           tok = val;
           debugPrint("tok $tok");
           if (tok.contains('"token":')) {
-            // Network.getGetProductList(tok);
-            //Network.getGetProductDetail(tok);
-            Network.getGetProductList(tok).then((value1) {
-              debugPrint(products.length.toString());
-              debugPrint("ok");
-              // TODO
+
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ProductList()),
+                //MaterialPageRoute(builder: (context) => const ProductList()),
+                MaterialPageRoute(builder: (context) => const BasePage()),
               );
-            });
+
+            // Network.getGetProductList(tok).then((value1) {
+            //   debugPrint(products.length.toString());
+            //   // TODO
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(builder: (context) => const ProductList()),
+            //   );
+            // });
           }
         });
       }

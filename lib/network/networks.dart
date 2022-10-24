@@ -1,4 +1,5 @@
 //import 'package:elec_shop/Screens/login_page.dart';
+import 'package:elec_shop/Data/order_data.dart';
 import 'package:flutter/material.dart';
 import 'package:cool_alert/cool_alert.dart';
 
@@ -18,7 +19,8 @@ import 'dart:async';
 import '../Data/products_data.dart';
 
 String tok = "";
-const String uriImportant = "http://192.168.1.51:8000";
+// const String uriImportant = "http://192.168.1.51:8000";
+const String uriImportant = "http://192.168.1.15:8000";
 
 //  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 // token =  SharedPreferences.getInstance();
@@ -189,7 +191,6 @@ class Network {
 
   //! Get pruduct list
   static Future<void> getGetProductList(
-    /* Future<void> */
     String token,
   ) async {
     Map valueMap = jsonDecode(token);
@@ -199,10 +200,8 @@ class Network {
       "Authorization": "Token ${valueMap["token"]}",
     }).timeout(const Duration(seconds: 10), onTimeout: () {
       debugPrint("err");
-      //showInternetResponseError(context);
       return http.Response('Error', 500);
     });
-
     if (response.statusCode == 200) {
       //debugPrint("پاسخ");
       debugPrint(json.decode(utf8.decode(response.bodyBytes)).toString());
@@ -267,11 +266,11 @@ class Network {
     }
   }
 
-  //! Get Searsh pruduct list
+  //! Get Search pruduct list
   //static Future<void> getSearchProductList(
   static Future getSearchProductList(
     String token,
-    String searh,
+    String search,
   ) async {
     Map valueMap = jsonDecode(token);
 
@@ -279,7 +278,7 @@ class Network {
 
     var response = await http.get(
         //Uri.parse('${Network.urlGetProductDitail}/questions/?search=$searh'),
-        Uri.parse('${Network.urlGetProductDitail}/questions/?search=$searh'),
+        Uri.parse('${Network.urlGetProductDitail}/questions/?search=$search'),
         headers: {
           "Authorization": "Token ${valueMap["token"]}",
         }).timeout(const Duration(seconds: 10), onTimeout: () {
@@ -298,7 +297,7 @@ class Network {
           ProductListData(
             id: elements["id"],
             code: elements["code"],
-            title: elements["title".toString()],
+            title: elements["title"].toString(),
             place: elements["place"].toString(),
             number: num.parse(elements["number"].toString()),
             description: elements["description"].toString(),
@@ -314,7 +313,48 @@ class Network {
           ),
         );
       }
-      //debugPrint("ofter get ${products.length}");
+      return;
+    } else {
+      throw Exception('Album loading failed!');
+    }
+  }
+
+  //! Get order list
+  static Future getOrderList(
+    String token,
+  ) async {
+    Map valueMap = jsonDecode(token);
+
+    //contacts.clear();
+
+    var response = await http.get(
+        //Uri.parse('${Network.urlGetProductDitail}/questions/?search=$searh'),
+        Uri.parse('${Network.urlGetProductDitail}/product_order_staff/'),
+        headers: {
+          "Authorization": "Token ${valueMap["token"]}",
+        }).timeout(const Duration(seconds: 10), onTimeout: () {
+      debugPrint("err");
+      //showInternetResponseError(context);
+      return http.Response('Error', 500);
+    });
+    debugPrint(response.statusCode.toString());
+    if (response.statusCode == 200) {
+      debugPrint(utf8.decode(response.bodyBytes));
+      List jsonDecode = converter.jsonDecode(utf8.decode(response.bodyBytes));
+
+      for (var elements in jsonDecode) {
+        debugPrint(elements.toString());
+        order.add(
+          OrderListData(
+            id: elements["id"],
+            owner: elements["owner"],
+            isPaid: elements["is_paid"],
+            paymentDate: elements["payment_date"],
+            jPaymentDate: elements["j_payment_date"],
+          ),
+        );
+      }
+      debugPrint("ofter get ${order.length}");
       return;
       // Map detailMap = jsonDecode(utf8.decode(response.bodyBytes));
 
@@ -322,12 +362,69 @@ class Network {
 
       // ProductDetailData.getAll(detailMap);
 
+    } else {
+      throw Exception('Album loading failed!');
     }
-    else {
+  }
+
+  //! Get pruduct order list
+  static Future<void> getGetProductOrderList(
+    String token,
+    String order,
+  ) async {
+    Map valueMap = jsonDecode(token);
+
+    //contacts.clear();
+    var response = await http.get(
+        Uri.parse(
+            '${Network.urlGetProductList}product_order_ditails_staff/$order'),
+        headers: {
+          "Authorization": "Token ${valueMap["token"]}",
+        }).timeout(const Duration(seconds: 10), onTimeout: () {
+      debugPrint("err");
+      return http.Response('Error', 500);
+    });
+    if (response.statusCode == 200) {
+      //debugPrint("پاسخ");
+      debugPrint(json.decode(utf8.decode(response.bodyBytes)).toString());
+      // debugPrint(response.body);
+      List jsonDecode = converter.jsonDecode(utf8.decode(response.bodyBytes));
+      products.clear();
+      for (var elements in jsonDecode) {
+        debugPrint(elements.toString());
+        // debugPrint(elements["id"]);
+        debugPrint(elements["active"]);
+        debugPrint(elements["active"].runtimeType.toString());
+
+        // products.add(
+        //   ProductListData(
+        //     id: elements["id"],
+        //     code: elements["code"],
+        //     title: elements["title"].toString(),
+        //     place: elements["place"].toString(),
+        //     number: num.parse(elements["number"].toString()),
+        //     description: elements["description"].toString(),
+        //     smallDescription: elements["smallDescription"].toString(),
+        //     price: elements["price"].toString(),
+        //     priceOff: elements["priceOff"].toString(),
+        //     imageUrl: elements["image"],
+        //     imageCumpnail: elements["image_tumpnail"],
+        //     active: elements["active"],
+        //     visitCount: elements["visit_count"],
+        //     vige: elements["vige"],
+        //     categories: elements["categories"],
+        //   ),
+        // );
+      }
+      debugPrint("ofter get ${products.length}");
+      return;
+    } else {
       throw Exception('Album loading failed!');
     }
   }
 }
+
+
 
 /*
 Avoid using braces in interpolation when not needed.

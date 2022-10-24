@@ -43,6 +43,8 @@ dependencies:
   search_app_bar_page: ^2.1.5
 #  searchfield: ^0.7.1
   persian_number_utility: ^1.1.2
+  qr_code_scanner: ^1.0.1
+
 
 dev_dependencies:
   flutter_test:

@@ -32,7 +32,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 //   "assets/images/4_motor_4.jpg",
                 // ),
                 width: size.width,
-                height: size.height / 2.35,
+                height: size.height / 3,
               ),
               // const SizedBox(
               //   height: 40,

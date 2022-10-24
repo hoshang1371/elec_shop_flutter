@@ -1,27 +1,85 @@
-import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
-//import 'package:elec_shop/json_user.dart';
-//http://127.0.0.1:8000/core
-//http://10.0.2.2:8000/core
-//http://192.168.1.51:8000/api/api_token_auth/
-test() async {
-  var response = await http.get(Uri.parse("http://192.168.1.51:8000/core"));
-  debugPrint(response.body);
+import 'package:flutter/material.dart';
 
-  // http.get(Uri.parse("http://127.0.0.1:8000/core")).then((response) {
-  //   debugPrint(response.statusCode.toString());
-  //   // debugPrint(response.body);
-  //   // print(response.body);
-  // });
+class Page1 extends StatelessWidget {
+  const Page1({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xffC4DFCB),
+      child: Center(
+        child: Text(
+          "Page Number 1",
+          style: TextStyle(
+            color: Colors.green[900],
+            fontSize: 45,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
+class Page2 extends StatelessWidget {
+  const Page2({Key? key}) : super(key: key);
 
-// void postDataLogin({
-//   required String email,
-//   required String password,
-//   }) async {
-//     User user = User(email:email,password:password);
-//     //http.post(Network.url, body: user.toJson()).then((response) {
-//       //print(response.body);
-//     //});
-//   }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xffC4DFCB),
+      child: Center(
+        child: Text(
+          "Page Number 2",
+          style: TextStyle(
+            color: Colors.green[900],
+            fontSize: 45,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Page3 extends StatelessWidget {
+  const Page3({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xffC4DFCB),
+      child: Center(
+        child: Text(
+          "Page Number 3",
+          style: TextStyle(
+            color: Colors.green[900],
+            fontSize: 45,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Page4 extends StatelessWidget {
+  const Page4({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xffC4DFCB),
+      child: Center(
+        child: Text(
+          "Page Number 4",
+          style: TextStyle(
+            color: Colors.green[900],
+            fontSize: 45,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}

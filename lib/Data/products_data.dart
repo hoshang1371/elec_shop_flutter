@@ -94,3 +94,5 @@ class ProductDetailData {
     ProductDetailData.categories = detailMap["categories"];
   }
 }
+
+
