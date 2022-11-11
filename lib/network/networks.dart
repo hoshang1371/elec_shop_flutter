@@ -1,5 +1,8 @@
 //import 'package:elec_shop/Screens/login_page.dart';
 import 'package:elec_shop/Data/order_data.dart';
+import 'package:elec_shop/Data/user_data.dart';
+import 'package:elec_shop/json_order_is_paid.dart';
+import 'package:elec_shop/json_product.dart';
 import 'package:flutter/material.dart';
 import 'package:cool_alert/cool_alert.dart';
 
@@ -19,8 +22,8 @@ import 'dart:async';
 import '../Data/products_data.dart';
 
 String tok = "";
-// const String uriImportant = "http://192.168.1.51:8000";
-const String uriImportant = "http://192.168.1.15:8000";
+const String uriImportant = "http://192.168.1.51:8000";
+// const String uriImportant = "http://192.168.1.15:8000";
 
 //  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 // token =  SharedPreferences.getInstance();
@@ -33,6 +36,8 @@ class Network {
   static Uri urlGetProductDitail = Uri.parse("$uriImportant/api");
   //static Uri urlGetProductList = Uri.parse("$uriImportant/api/");
   static Uri urlToken = Uri.parse("$uriImportant/api/Check_token/");
+  static Uri urlProductData =
+      Uri.parse("$uriImportant/api/product_order_staff/");
   //static String? tok;
   //! Check Internet
 
@@ -169,6 +174,11 @@ class Network {
     if (response.statusCode == 200) {
       debugPrint("*****************************");
       debugPrint(response.body);
+      Map valueMap = jsonDecode(response.body);
+      UserData.username = valueMap["username"].toString();
+      UserData.userid = valueMap["userid"].toString();
+      debugPrint(valueMap["username"].toString());
+      debugPrint(valueMap["userid"].toString());
       debugPrint(response.body.contains('"token":').toString());
       debugPrint(response.statusCode.toString());
       return (response.body);
@@ -210,7 +220,7 @@ class Network {
       List jsonDecode = converter.jsonDecode(utf8.decode(response.bodyBytes));
 
       for (var elements in jsonDecode) {
-        //debugPrint(elements.toString());
+        // debugPrint(elements.toString());
         products.add(
           ProductListData(
             id: elements["id"],
@@ -385,46 +395,141 @@ class Network {
       return http.Response('Error', 500);
     });
     if (response.statusCode == 200) {
-      //debugPrint("پاسخ");
       debugPrint(json.decode(utf8.decode(response.bodyBytes)).toString());
       // debugPrint(response.body);
       List jsonDecode = converter.jsonDecode(utf8.decode(response.bodyBytes));
-      products.clear();
+      ordrlist.clear();
+      OrderList.allTotalPrice = 0;
       for (var elements in jsonDecode) {
-        debugPrint(elements.toString());
-        // debugPrint(elements["id"]);
-        debugPrint(elements["active"]);
-        debugPrint(elements["active"].runtimeType.toString());
-
-        // products.add(
-        //   ProductListData(
-        //     id: elements["id"],
-        //     code: elements["code"],
-        //     title: elements["title"].toString(),
-        //     place: elements["place"].toString(),
-        //     number: num.parse(elements["number"].toString()),
-        //     description: elements["description"].toString(),
-        //     smallDescription: elements["smallDescription"].toString(),
-        //     price: elements["price"].toString(),
-        //     priceOff: elements["priceOff"].toString(),
-        //     imageUrl: elements["image"],
-        //     imageCumpnail: elements["image_tumpnail"],
-        //     active: elements["active"],
-        //     visitCount: elements["visit_count"],
-        //     vige: elements["vige"],
-        //     categories: elements["categories"],
-        //   ),
-        // );
+        // debugPrint(elements.toString());
+        debugPrint(elements["orderDetail_count_price"].toString());
+        ordrlist.add(
+          OrderList(
+            idOrder: elements["id_order"],
+            orderDetailCountPrice: elements["orderDetail_count_price"],
+            id: elements["id"],
+            code: elements["code"],
+            title: elements["title"].toString(),
+            place: elements["place"].toString(),
+            number: num.parse(elements["count"].toString()),
+            description: elements["description"].toString(),
+            smallDescription: elements["smallDescription"].toString(),
+            price: elements["price"].toString(),
+            priceOff: elements["priceOff"].toString(),
+            imageUrl: "$uriImportant${elements["image"]}",
+            imageTumpnail: "$uriImportant${elements["image_tumpnail"]}",
+            active: elements["active"] == 'true',
+            visitCount: elements["visit_count"],
+            vige: elements["vige"] == 'true',
+          ),
+        );
+        OrderList.allTotalPrice =
+            OrderList.allTotalPrice + elements["orderDetail_count_price"];
       }
-      debugPrint("ofter get ${products.length}");
+      debugPrint("+++++++++++++++++++++++++");
+      debugPrint(OrderList.allTotalPrice.toString());
       return;
     } else {
       throw Exception('Album loading failed!');
     }
   }
+
+  //! post product
+  static Future<void> postProduct({
+    required String token,
+    required String count,
+    required String product,
+  }) async {
+    Map valueMap = jsonDecode(token);
+    Product productData = Product(count: count, product: product);
+    var response = await http
+        .post(Network.urlProductData, body: productData.toJson(), headers: {
+      "Authorization": "Token ${valueMap["token"]}",
+    }).timeout(const Duration(seconds: 10), onTimeout: () {
+      debugPrint("err");
+      return http.Response('Error', 500);
+    });
+
+    // debugPrint((response.body));
+    debugPrint(json.decode(utf8.decode(response.bodyBytes)).toString());
+    debugPrint(response.statusCode.toString());
+// if (response.statusCode == 200)
+  }
+
+  //! delete pruduct order
+  static Future<void> deleteProductOrder(
+    String token,
+    String orderProductDeleteId,
+  ) async {
+    Map valueMap = jsonDecode(token);
+
+    var response = await http.delete(
+        Uri.parse(
+            '${Network.urlGetProductList}product_order_delete_staff/$orderProductDeleteId/delete'),
+        headers: {
+          "Authorization": "Token ${valueMap["token"]}",
+        }).timeout(const Duration(seconds: 10), onTimeout: () {
+      debugPrint("err");
+      return http.Response('Error', 500);
+    });
+    // debugPrint(json.decode(utf8.decode(response.bodyBytes)).toString());
+    debugPrint(response.statusCode.toString());
+  }
+
+  //! delete  order
+  static Future<void> deleteOrder(
+    String token,
+    String orderDeleteId,
+  ) async {
+    Map valueMap = jsonDecode(token);
+
+    var response = await http.delete(
+        Uri.parse(
+            '${Network.urlGetProductList}order_delete_staff/$orderDeleteId/delete'),
+        headers: {
+          "Authorization": "Token ${valueMap["token"]}",
+        }).timeout(const Duration(seconds: 10), onTimeout: () {
+      debugPrint("err");
+      return http.Response('Error', 500);
+    });
+    // debugPrint(json.decode(utf8.decode(response.bodyBytes)).toString());
+    debugPrint(response.statusCode.toString());
+  }
+
+  //! put isPaid order
+  static Future<void> putIsPaidOrder(
+    String token,
+    String orderId,
+    String userId,
+  ) async {
+    Map valueMap = jsonDecode(token);
+
+    OrderIsPaid orderIsPaid = OrderIsPaid(is_paid: "1", owner: userId);
+    // var response = await http.post(Network.url, body: user.toJson());
+    var response = await http
+        .put(
+            Uri.parse(
+                '${Network.urlGetProductList}isPaid_order_update_staff/update/$orderId/'),
+            headers: {
+              "Authorization": "Token ${valueMap["token"]}",
+            },
+            body: orderIsPaid.toJson()
+            // body: jsonEncode(<String, dynamic>{
+            //   "is_paid": "1",
+            //   "owner": "12",
+            // }),
+            )
+        .timeout(const Duration(seconds: 10), onTimeout: () {
+      debugPrint("err");
+      return http.Response('Error', 500);
+    });
+    debugPrint(orderId);
+    debugPrint(orderIsPaid.toJson().toString());
+    debugPrint(json.decode(utf8.decode(response.bodyBytes)).toString());
+    // debugPrint(response.body.toString());
+    debugPrint(response.statusCode.toString());
+  }
 }
-
-
 
 /*
 Avoid using braces in interpolation when not needed.
