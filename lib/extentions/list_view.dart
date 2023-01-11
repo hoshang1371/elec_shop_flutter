@@ -36,6 +36,7 @@ class _ListViewProductState extends State<ListViewProduct> {
               return Text('Error: ${snapshot.error}');
             } else {
               return ListView.builder(
+                // shrinkWrap: true,
                 itemCount: widget.productslistViewProduct.length,
                 itemBuilder: (BuildContext context, int index) {
                   return Container(
@@ -63,7 +64,7 @@ class _ListViewProductState extends State<ListViewProduct> {
                         (widget.productslistViewProduct[index].active)
                             ? "فعال"
                             : "غیر فعال",
-                        style: (products[index].active)
+                        style: (widget.productslistViewProduct[index].active)
                             ? const TextStyle(color: Colors.green, fontSize: 15)
                             : const TextStyle(color: Colors.red, fontSize: 15),
                       ),

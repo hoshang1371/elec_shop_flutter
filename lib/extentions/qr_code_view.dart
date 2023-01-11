@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:elec_shop/Screens/base_page.dart';
 import 'package:elec_shop/Screens/product_detail.dart';
+import 'package:elec_shop/Screens/saerch_with_place.dart';
 import 'package:elec_shop/network/networks.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -148,24 +150,48 @@ class _QRViewExampleState extends State<QRViewExample> {
   void _onQRViewCreated(QRViewController controller) {
     setState(() {
       this.controller = controller;
+      // String this.buffer = '';
     });
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
         // print(result!.code);
       });
-      context.loaderOverlay.show();
+      // context.loaderOverlay.show();
       // debugPrint("hhhhh");
-      Network.getProductDetail(
-              tok, (result!.code) ?? "")
-          .then((value) => {
-                context.loaderOverlay.hide(),
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ProductDetails()),
-                )
-              });
+      // Network.getProductDetail(
+      //         tok, (result!.code) ?? "")
+      //     .then((value) => {
+      //           context.loaderOverlay.hide(),
+      //           Navigator.push(
+      //             context,
+      //             MaterialPageRoute(
+      //                 builder: (context) => const ProductDetails()),
+      //           )
+      //         });
+
+      // ListViewProduct(
+      // productslistViewProduct: searchProducts,
+
+      // Network.getSearchProductWithOnlyplaceList(tok, (result!.code) ?? "")
+      //     .then((value) => {
+      //           context.loaderOverlay.hide(),
+      String buffer =(result!.code) ?? "";
+      debugPrint("(result?.code) ?? ''");
+      debugPrint((result!.code) ?? "");
+      debugPrint(buffer);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ResultOfSearchWithPalce(
+                  placeCode: (buffer),
+                )),
+      );
+      controller.pauseCamera();
+      result = null;
+      // BasePage.pageIndex = 0;
+      //         });
+      // );
     });
   }
 

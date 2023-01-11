@@ -22,7 +22,7 @@ import 'dart:async';
 import '../Data/products_data.dart';
 
 String tok = "";
-const String uriImportant = "http://192.168.1.51:8000";
+const String uriImportant = "http://192.168.1.52:8000";
 // const String uriImportant = "http://192.168.1.15:8000";
 
 //  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -283,9 +283,6 @@ class Network {
     String search,
   ) async {
     Map valueMap = jsonDecode(token);
-
-    //contacts.clear();
-
     var response = await http.get(
         //Uri.parse('${Network.urlGetProductDitail}/questions/?search=$searh'),
         Uri.parse('${Network.urlGetProductDitail}/questions/?search=$search'),
@@ -302,7 +299,7 @@ class Network {
       List jsonDecode = converter.jsonDecode(utf8.decode(response.bodyBytes));
 
       for (var elements in jsonDecode) {
-        debugPrint(elements.toString());
+        // debugPrint(elements.toString());
         searchProducts.add(
           ProductListData(
             id: elements["id"],
@@ -323,6 +320,63 @@ class Network {
           ),
         );
       }
+      return;
+    } else {
+      throw Exception('Album loading failed!');
+    }
+  }
+
+//! Get Search pruduct ith only place list
+  //static Future<void> getSearchProductList(
+  static Future getSearchProductWithOnlyplaceList(
+    String token,
+    String search,
+  ) async {
+    Map valueMap = jsonDecode(token);
+
+    //contacts.clear();
+
+    var response = await http.get(
+        //Uri.parse('${Network.urlGetProductDitail}/questions/?search=$searh'),
+        Uri.parse(
+            '${Network.urlGetProductDitail}/questionsForPlace/?search=$search'),
+        headers: {
+          "Authorization": "Token ${valueMap["token"]}",
+        }).timeout(const Duration(seconds: 10), onTimeout: () {
+      debugPrint("err");
+      //showInternetResponseError(context);
+      return http.Response('Error', 500);
+    });
+    // debugPrint(response.statusCode.toString());
+    if (response.statusCode == 200) {
+      searchProductsWithPlace.clear();
+      debugPrint(utf8.decode(response.bodyBytes));
+      List jsonDecode = converter.jsonDecode(utf8.decode(response.bodyBytes));
+
+      for (var elements in jsonDecode) {
+        // debugPrint(elements.toString());
+        searchProductsWithPlace.add(
+          ProductListData(
+            id: elements["id"],
+            code: elements["code"],
+            title: elements["title"].toString(),
+            place: elements["place"].toString(),
+            number: num.parse(elements["number"].toString()),
+            description: elements["description"].toString(),
+            smallDescription: elements["smallDescription"].toString(),
+            price: elements["price"].toString(),
+            priceOff: elements["priceOff"].toString(),
+            imageUrl: elements["image"],
+            imageCumpnail: elements["image_tumpnail"],
+            active: elements["active"],
+            visitCount: elements["visit_count"],
+            vige: elements["vige"],
+            categories: elements["categories"],
+          ),
+        );
+      }
+        // debugPrint(searchProductsWithPlace.length.toString());
+        // debugPrint(searchProductsWithPlace.toString());
       return;
     } else {
       throw Exception('Album loading failed!');

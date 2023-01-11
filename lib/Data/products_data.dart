@@ -35,8 +35,9 @@ class ProductListData {
   final List categories;
 }
 
-List<ProductListData> products = <ProductListData>[];
 List<ProductListData> searchProducts = <ProductListData>[];
+List<ProductListData> products = <ProductListData>[];
+List<ProductListData> searchProductsWithPlace = <ProductListData>[];
 
 class ProductDetailData {
   // const ProductDetailData({

@@ -11,7 +11,7 @@ import '../Data/products_data.dart';
 //State<ListViewProduct>
 class MySearchDelegate extends SearchDelegate {
 //class MySearchDelegate extends SearchDelegate {
-  List<ProductListData> searchResults = products;
+  // List<ProductListData> searchResults = products;
   //List<ProductListData> searchResults = <ProductListData>[];
 
   @override
